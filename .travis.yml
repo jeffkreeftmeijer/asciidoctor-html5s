@@ -4,6 +4,8 @@ language: ruby
 rvm:
   - 2.4
   - 2.3
+  - 2.2
+  - 2.1
   - jruby-9.1.12.0
   - ruby-head
   - jruby-head
@@ -12,6 +14,16 @@ matrix:
     - rvm: ruby-head
     - rvm: jruby-head
   fast_finish: true
+install:
+  - if [[ "$TRAVIS_RUBY_VERSION" == 2.[12] ]]; then
+      rvm-exec 2.4 bundle install --jobs=3 --retry=3;
+      rm Gemfile.lock;
+    fi
+  - bundle install --jobs=3 --retry=3
+before_script:
+  - if [[ "$TRAVIS_RUBY_VERSION" == 2.[12] ]]; then
+      rvm-exec 2.4 rake build:converter;
+    fi
 script:
   - bundle exec rake test
 before_deploy:
